@@ -27,6 +27,10 @@ git clone https://github.com/detro/.bashrc.d.git ~/.bashrc.d
 ```
 **3.** Start a new shell (i.e. bash session)
 
+# Special mention
+
+One of the scripts I use for my prompt is [posh-git-sh](https://github.com/lyze/posh-git-sh): thanks to [David Xu](https://github.com/lyze) for creating it.
+
 # License
 
 None. Do with this as you see fit: [unlicense](http://unlicense.org/).
