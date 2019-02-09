@@ -19,4 +19,4 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 #   │   ├── go
 #   │   └── gocache
 #   └── current -> <VERSION>
-[ -d "$HOME/.go/current/go/bin" ] && export PATH="$HOME/.go/current/go/bin:$PATH" && export GOPATH="$HOME/Workspaces/go"
+[ -d "$HOME/.go/current/go/bin" ] && export PATH="$HOME/.go/current/go/bin:$PATH" && export GOPATH="$HOME/Workspaces/go" && export PATH="$GOPATH/bin:$PATH"
