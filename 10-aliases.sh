@@ -6,9 +6,6 @@ alias lla='ll -A'
 alias llh='ll -h'
 alias llha='ll -hA'
 
-# git
-alias glog='git log --decorate=full --oneline --graph'
-
 # su
 alias ssu='sudo -E su -p'
 
