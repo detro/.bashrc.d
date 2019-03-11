@@ -8,7 +8,7 @@ This allows to personalize, tweak, colorize and what not.
 
 When I created this repo on GitHub, I also discovered that many others have done similar things. This is in no way special, just my take on it.
 
-# Install
+## Install
 
 **1.** Add the following to your `~/.bashrc` file
 ```bash
@@ -27,10 +27,16 @@ git clone https://github.com/detro/.bashrc.d.git ~/.bashrc.d
 ```
 **3.** Start a new shell (i.e. bash session)
 
-# Special mention
+## Personalization?
+
+As much as one would love to write a set of Bash tweaks and functionalities, and have them work everywhere they work, there are still situations where you really need very specific things, in very circonscript contexts.
+
+In other words, if there is a specific configuration that you want to keep local to a machine, just add the file to your local copy of `.bashrc.d` with the extension `.private.sh`. Git will ignore it but it will get loaded.
+
+## Special mention
 
 One of the scripts I use for my prompt is [posh-git-sh](https://github.com/lyze/posh-git-sh): thanks to [David Xu](https://github.com/lyze) for creating it.
 
-# License
+## License
 
 None. Do with this as you see fit: [unlicense](http://unlicense.org/).
