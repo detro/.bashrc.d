@@ -11,3 +11,21 @@ if which subl &>/dev/null; then
 elif which vim &>/dev/null; then
     export KUBE_EDITOR="vim"
 fi
+
+# Setup a bare-minimum, local port forwarding for a service
+k_portfw () {
+    if [ $# -ne 3 ]; then
+        echo "Usage: k_portfw <SERVICE NAME> <PORT ON LOCALHOST> <PORT ON CLUSTER>"
+    else
+        kubectl port-forward svc/$1 $2:$3
+    fi
+}
+
+# Force a service to re-deploy, if the change is not automatically picked up (ex. republished Docker image)
+k_kick () {
+    if [ $# -ne 1 ]; then
+        echo "Usage: k_kick <SERVICE NAME>"
+    else
+        kubectl patch deployment $1 -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}}}}}"
+    fi
+}
