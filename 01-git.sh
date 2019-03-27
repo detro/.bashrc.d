@@ -8,7 +8,7 @@ _git_branch_depth() {
 
 _git_list_branch_commits() {
 	local LOG_FORMAT="* (%ai) %s%n%b"
-	git log --pretty="format:${LOG_FORMAT}" HEAD...HEAD~$(_git_branch_depth)
+	git log --pretty="format:${LOG_FORMAT}" HEAD...HEAD~$(_git_branch_depth) | sed '/^$/d'
 }
 
 git_squash_branch() {
