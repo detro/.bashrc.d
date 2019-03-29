@@ -12,14 +12,8 @@ When I created this repo on GitHub, I also discovered that many others have done
 
 **1.** Add the following to your `~/.bashrc` file
 ```bash
-
-# Source "~/.bashrc.d/*.sh"
-if [ -d ~/.bashrc.d ]; then
-    for BASHRC_D_FILE in `ls ~/.bashrc.d/*.sh`; do
-        . $BASHRC_D_FILE
-    done
-fi
-
+# Initialize `~/.bashrc.d`
+[[ -s "${HOME}/.bashrc.d/.init.sh" ]] && source ${HOME}/.bashrc.d/.init.sh
 ```
 **2.** Git clone this project as follows:
 ```bash
