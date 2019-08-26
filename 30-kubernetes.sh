@@ -29,3 +29,12 @@ k_kick () {
         kubectl patch deployment $1 -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}}}}}"
     fi
 }
+
+# Manually triggers a CronJob instead of waiting for next execution
+k_cron_kick () {
+    if [ $# -ne 1 ]; then
+        echo "Usage: k_cron_kick <CRONJOB NAME>"
+    else
+        kubectl create job --from=cronjob/$1 $1-manual-$(date -u +%s)
+    fi
+}
