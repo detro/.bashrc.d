@@ -1,5 +1,10 @@
 # Kubectl auto-completion
-which kubectl &>/dev/null && source <(kubectl completion bash)
+if which kubectl &>/dev/null; then
+    KUBECTL_COMPLETION_TMP=$(mktemp kubectl-completion-XXXXX)
+    kubectl completion bash > ${KUBECTL_COMPLETION_TMP}
+    source ${KUBECTL_COMPLETION_TMP}
+    rm ${KUBECTL_COMPLETION_TMP}
+fi
 
 # Alias and ensure completion works for the alias too
 alias k='kubectl'
