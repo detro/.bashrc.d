@@ -43,3 +43,29 @@ k_cron_kick () {
         kubectl create job --from=cronjob/$1 $1-manual-$(date -u +%s)
     fi
 }
+
+# Tunnel traffic toward IP/HOSTNAME private to the K8S cluster
+k_socat() {
+(
+    set -euo pipefail
+
+    local HOSTNAME="$1"
+    local PORT="$2"
+    local LOCAL_PORT="$3"
+    local SANITIZED_HOSTNAME=$(echo "${HOSTNAME//[.]/-}" | tr '[:upper:]' '[:lower:]')
+    local TEMP_POD_NAME="socat-${USER}-${SANITIZED_HOSTNAME}-${PORT}-$(date +%s)"
+
+    echo "Creating a temporary pod to create a tunnel from ${HOSTNAME}:${PORT} to localhost:${LOCAL_PORT}..."
+
+    kubectl run --restart=Never --image=alpine/socat $TEMP_POD_NAME -- -d -d tcp-listen:$PORT,fork,reuseaddr tcp-connect:$HOSTNAME:$PORT
+    kubectl wait --for=condition=Ready pod/$TEMP_POD_NAME
+
+    echo
+    echo "Please delete the pod after you're done:"
+    echo
+    echo "    kubectl delete pod $TEMP_POD_NAME --grace-period 1 --wait=false"
+    echo
+
+    kubectl port-forward pod/$TEMP_POD_NAME $LOCAL_PORT:$PORT
+)
+}
