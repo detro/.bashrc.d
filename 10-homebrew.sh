@@ -1,5 +1,5 @@
 if [[ "MACOSX" == ${OSNAME} ]] && [[ -x "$(which brew)" ]]; then
-	export PATH="/usr/local/bin:${PATH}"
+	export PATH="/usr/local/bin:/usr/local/sbin:${PATH}"
 
 	# Including "bash-completion@2" if installed
 	export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
