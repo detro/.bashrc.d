@@ -22,6 +22,7 @@ git clone https://github.com/detro/.bashrc.d.git ~/.bashrc.d
 **3.** Start a new shell (i.e. bash session)
 
 ### Using _Terminal_ on macOS
+
 By default, _Terminal_ starts the shell via `/usr/bin/login`, which makes the shell a login shell.
 On every platform (not just Mac OS X) bash does not use `.bashrc` for login shells (only `/etc/profile` and
 the first of `~/.bash_profile`, `~/.bash_login`, `~/.profile` that exists and is readable).
