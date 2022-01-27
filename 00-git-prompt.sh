@@ -1,9 +1,19 @@
 # bash/zsh git prompt support
 #
-# Copyright (C) 2018 David Xu
+#    Copyright (C) 2021 David Xu
 #
-# Based on the earlier work by Shawn O. Pearce <spearce@spearce.org>
-# Distributed under the GNU General Public License, version 2.0.
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # This script allows you to see the current branch in your prompt,
 # posh-git style.
@@ -91,7 +101,8 @@
 # arguments that specify the prefix and suffix of the git status string.
 #
 # This function should be called in PROMPT_COMMAND or similar.
-__posh_git_ps1() {
+__posh_git_ps1 ()
+{
     local ps1pc_prefix=
     local ps1pc_suffix=
     case "$#" in
@@ -108,7 +119,7 @@ __posh_git_ps1() {
     PS1=$ps1pc_prefix$gitstring$ps1pc_suffix
 }
 
-__posh_color() {
+__posh_color () {
     if [ -n "$ZSH_VERSION" ]; then
         echo %{$1%}
     elif [ -n "$BASH_VERSION" ]; then
@@ -120,9 +131,9 @@ __posh_color() {
 }
 
 # Echoes the git status string.
-__posh_git_echo() {
+__posh_git_echo () {
     if [ "$(git config --bool bash.enableGitStatus)" = 'false' ]; then
-        return
+        return;
     fi
 
     local Red='\033[0;31m'
@@ -146,7 +157,7 @@ __posh_git_echo() {
     local AfterForegroundColor=$(__posh_color $BrightYellow) # Yellow
     local AfterBackgroundColor=
 
-    local BranchForegroundColor=$(__posh_color $BrightCyan) # Cyan
+    local BranchForegroundColor=$(__posh_color $BrightCyan)  # Cyan
     local BranchBackgroundColor=
     local BranchAheadForegroundColor=$(__posh_color $BrightGreen) # Green
     local BranchAheadBackgroundColor=
@@ -170,37 +181,43 @@ __posh_git_echo() {
     local BeforeStash='('
     local AfterStash=')'
 
+    local LocalDefaultStatusSymbol=''
+    local LocalWorkingStatusSymbol=' !'
+    local LocalWorkingStatusColor=$(__posh_color "$Red")
+    local LocalStagedStatusSymbol=' ~'
+    local LocalStagedStatusColor=$(__posh_color "$BrightCyan")
+
     local RebaseForegroundColor=$(__posh_color '\e[0m') # reset
     local RebaseBackgroundColor=
 
-    local BranchBehindAndAheadDisplay=$(git config --get bash.branchBehindAndAheadDisplay)
+    local BranchBehindAndAheadDisplay=`git config --get bash.branchBehindAndAheadDisplay`
     if [ -z "$BranchBehindAndAheadDisplay" ]; then
         BranchBehindAndAheadDisplay="full"
     fi
 
-    local EnableFileStatus=$(git config --bool bash.enableFileStatus)
+    local EnableFileStatus=`git config --bool bash.enableFileStatus`
     case "$EnableFileStatus" in
-        true) EnableFileStatus=true ;;
+        true)  EnableFileStatus=true ;;
         false) EnableFileStatus=false ;;
-        *) EnableFileStatus=true ;;
+        *)     EnableFileStatus=true ;;
     esac
-    local ShowStatusWhenZero=$(git config --bool bash.showStatusWhenZero)
+    local ShowStatusWhenZero=`git config --bool bash.showStatusWhenZero`
     case "$ShowStatusWhenZero" in
-        true) ShowStatusWhenZero=true ;;
+        true)  ShowStatusWhenZero=true ;;
         false) ShowStatusWhenZero=false ;;
-        *) ShowStatusWhenZero=false ;;
+        *)     ShowStatusWhenZero=false ;;
     esac
-    local EnableStashStatus=$(git config --bool bash.enableStashStatus)
+    local EnableStashStatus=`git config --bool bash.enableStashStatus`
     case "$EnableStashStatus" in
-        true) EnableStashStatus=true ;;
+        true)  EnableStashStatus=true ;;
         false) EnableStashStatus=false ;;
-        *) EnableStashStatus=true ;;
+        *)     EnableStashStatus=true ;;
     esac
-    local EnableStatusSymbol=$(git config --bool bash.enableStatusSymbol)
+    local EnableStatusSymbol=`git config --bool bash.enableStatusSymbol`
     case "$EnableStatusSymbol" in
-        true) EnableStatusSymbol=true ;;
+        true)  EnableStatusSymbol=true ;;
         false) EnableStatusSymbol=false ;;
-        *) EnableStatusSymbol=true ;;
+        *)     EnableStatusSymbol=true ;;
     esac
 
     local BranchIdenticalStatusSymbol=''
@@ -209,11 +226,11 @@ __posh_git_echo() {
     local BranchBehindAndAheadStatusSymbol=''
     local BranchWarningStatusSymbol=''
     if $EnableStatusSymbol; then
-        BranchIdenticalStatusSymbol=$' \xE2\x89\xA1'     # Three horizontal lines
-        BranchAheadStatusSymbol=$' \xE2\x86\x91'         # Up Arrow
-        BranchBehindStatusSymbol=$' \xE2\x86\x93'        # Down Arrow
-        BranchBehindAndAheadStatusSymbol=$'\xE2\x86\x95' # Up and Down Arrow
-        BranchWarningStatusSymbol=' ?'
+      BranchIdenticalStatusSymbol=$' \xE2\x89\xA1' # Three horizontal lines
+      BranchAheadStatusSymbol=$' \xE2\x86\x91' # Up Arrow
+      BranchBehindStatusSymbol=$' \xE2\x86\x93' # Down Arrow
+      BranchBehindAndAheadStatusSymbol=$'\xE2\x86\x95' # Up and Down Arrow
+      BranchWarningStatusSymbol=' ?'
     fi
 
     # these globals are updated by __posh_git_ps1_upstream_divergence
@@ -231,9 +248,9 @@ __posh_git_echo() {
     local step=''
     local total=''
     if [ -d "$g/rebase-merge" ]; then
-        b=$(cat "$g/rebase-merge/head-name" 2> /dev/null)
-        step=$(cat "$g/rebase-merge/msgnum" 2> /dev/null)
-        total=$(cat "$g/rebase-merge/end" 2> /dev/null)
+        b=$(cat "$g/rebase-merge/head-name" 2>/dev/null)
+        step=$(cat "$g/rebase-merge/msgnum" 2>/dev/null)
+        total=$(cat "$g/rebase-merge/end" 2>/dev/null)
         if [ -f "$g/rebase-merge/interactive" ]; then
             rebase='|REBASE-i'
         else
@@ -260,30 +277,26 @@ __posh_git_echo() {
             rebase='|BISECTING'
         fi
 
-        b=$(git symbolic-ref HEAD 2> /dev/null) || {
+        b=$(git symbolic-ref HEAD 2>/dev/null) || {
             is_detached=true
             local output=$(git config -z --get bash.describeStyle)
             if [ -n "$output" ]; then
                 GIT_PS1_DESCRIBESTYLE=$output
             fi
             b=$(
-                case "${GIT_PS1_DESCRIBESTYLE-}" in
-                    contains)
-                        git describe --contains HEAD
-                        ;;
-                    branch)
-                        git describe --contains --all HEAD
-                        ;;
-                    describe)
-                        git describe HEAD
-                        ;;
-                    * | default)
-                        git describe --tags --exact-match HEAD
-                        ;;
-                esac 2> /dev/null
-            ) ||
-                b=$(cut -c1-7 "$g/HEAD" 2> /dev/null)... ||
-                b='unknown'
+            case "${GIT_PS1_DESCRIBESTYLE-}" in
+            (contains)
+                git describe --contains HEAD ;;
+            (branch)
+                git describe --contains --all HEAD ;;
+            (describe)
+                git describe HEAD ;;
+            (* | default)
+                git describe --tags --exact-match HEAD ;;
+            esac 2>/dev/null) ||
+
+            b=$(cut -c1-7 "$g/HEAD" 2>/dev/null)... ||
+            b='unknown'
             b="($b)"
         }
     fi
@@ -296,15 +309,15 @@ __posh_git_echo() {
     local stashCount=0
     local isBare=''
 
-    if [ 'true' = "$(git rev-parse --is-inside-git-dir 2> /dev/null)" ]; then
-        if [ 'true' = "$(git rev-parse --is-bare-repository 2> /dev/null)" ]; then
+    if [ 'true' = "$(git rev-parse --is-inside-git-dir 2>/dev/null)" ]; then
+        if [ 'true' = "$(git rev-parse --is-bare-repository 2>/dev/null)" ]; then
             isBare='BARE:'
         else
             b='GIT_DIR!'
         fi
-    elif [ 'true' = "$(git rev-parse --is-inside-work-tree 2> /dev/null)" ]; then
+    elif [ 'true' = "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]; then
         if $EnableStashStatus; then
-            git rev-parse --verify refs/stash > /dev/null 2>&1 && hasStash=true
+            git rev-parse --verify refs/stash >/dev/null 2>&1 && hasStash=true
             if $hasStash; then
                 stashCount=$(git stash list | wc -l | tr -d '[:space:]')
             fi
@@ -323,45 +336,52 @@ __posh_git_echo() {
         local filesModified=0
         local filesDeleted=0
         local filesUnmerged=0
-        while IFS="\n" read -r tag rest; do
+        while IFS="\n" read -r tag rest
+        do
             case "${tag:0:1}" in
-                A)
-                    ((indexAdded++))
+                A )
+                    (( indexAdded++ ))
                     ;;
-                M)
-                    ((indexModified++))
+                M )
+                    (( indexModified++ ))
                     ;;
-                R)
-                    ((indexModified++))
+                T )
+                    (( indexModified++ ))
                     ;;
-                C)
-                    ((indexModified++))
+                R )
+                    (( indexModified++ ))
                     ;;
-                D)
-                    ((indexDeleted++))
+                C )
+                    (( indexModified++ ))
                     ;;
-                U)
-                    ((indexUnmerged++))
+                D )
+                    (( indexDeleted++ ))
+                    ;;
+                U )
+                    (( indexUnmerged++ ))
                     ;;
             esac
             case "${tag:1:1}" in
-                \?)
-                    ((filesAdded++))
+                \? )
+                    (( filesAdded++ ))
                     ;;
-                A)
-                    ((filesAdded++))
+                A )
+                    (( filesAdded++ ))
                     ;;
-                M)
-                    ((filesModified++))
+                M )
+                    (( filesModified++ ))
                     ;;
-                D)
-                    ((filesDeleted++))
+                T )
+                    (( filesModified++ ))
                     ;;
-                U)
-                    ((filesUnmerged++))
+                D )
+                    (( filesDeleted++ ))
+                    ;;
+                U )
+                    (( filesUnmerged++ ))
                     ;;
             esac
-        done <<< "$(git status --porcelain 2> /dev/null)"
+        done <<< "`git status --porcelain 2>/dev/null`"
     fi
 
     local gitstring=
@@ -371,7 +391,7 @@ __posh_git_echo() {
     gitstring="$BeforeBackgroundColor$BeforeForegroundColor$BeforeText"
 
     # branch
-    if ((__POSH_BRANCH_BEHIND_BY > 0 && __POSH_BRANCH_AHEAD_BY > 0)); then
+    if (( $__POSH_BRANCH_BEHIND_BY > 0 && $__POSH_BRANCH_AHEAD_BY > 0 )); then
         gitstring+="$BranchBehindAndAheadBackgroundColor$BranchBehindAndAheadForegroundColor$branchstring"
         if [ "$BranchBehindAndAheadDisplay" = "full" ]; then
             gitstring+="$BranchBehindStatusSymbol$__POSH_BRANCH_BEHIND_BY$BranchAheadStatusSymbol$__POSH_BRANCH_AHEAD_BY"
@@ -380,21 +400,21 @@ __posh_git_echo() {
         else
             gitstring+=" $BranchBehindAndAheadStatusSymbol"
         fi
-    elif ((__POSH_BRANCH_BEHIND_BY > 0)); then
+    elif (( $__POSH_BRANCH_BEHIND_BY > 0 )); then
         gitstring+="$BranchBehindBackgroundColor$BranchBehindForegroundColor$branchstring"
         if [ "$BranchBehindAndAheadDisplay" = "full" -o "$BranchBehindAndAheadDisplay" = "compact" ]; then
             gitstring+="$BranchBehindStatusSymbol$__POSH_BRANCH_BEHIND_BY"
         else
             gitstring+="$BranchBehindStatusSymbol"
         fi
-    elif ((__POSH_BRANCH_AHEAD_BY > 0)); then
+    elif (( $__POSH_BRANCH_AHEAD_BY > 0 )); then
         gitstring+="$BranchAheadBackgroundColor$BranchAheadForegroundColor$branchstring"
         if [ "$BranchBehindAndAheadDisplay" = "full" -o "$BranchBehindAndAheadDisplay" = "compact" ]; then
             gitstring+="$BranchAheadStatusSymbol$__POSH_BRANCH_AHEAD_BY"
         else
             gitstring+="$BranchAheadStatusSymbol"
         fi
-    elif ((divergence_return_code)); then
+    elif (( $divergence_return_code )); then
         # ahead and behind are both 0, but there was some problem while executing the command.
         gitstring+="$BranchBackgroundColor$BranchForegroundColor$branchstring$BranchWarningStatusSymbol"
     else
@@ -402,39 +422,55 @@ __posh_git_echo() {
         gitstring+="$BranchBackgroundColor$BranchForegroundColor$branchstring$BranchIdenticalStatusSymbol"
     fi
 
-    # index status
-    if $EnableFileStatus; then
-        local indexCount="$((indexAdded + indexModified + indexDeleted + indexUnmerged))"
-        local workingCount="$((filesAdded + filesModified + filesDeleted + filesUnmerged))"
-        if ((indexCount != 0)) || $ShowStatusWhenZero; then
-            gitstring+="$IndexBackgroundColor$IndexForegroundColor +$indexAdded ~$indexModified -$indexDeleted"
-        fi
-        if ((indexUnmerged != 0)); then
-            gitstring+=" $IndexBackgroundColor$IndexForegroundColor!$indexUnmerged"
-        fi
-        if ((indexCount != 0 && (workingCount != 0 || ShowStatusWhenZero))); then
-            gitstring+="$DelimBackgroundColor$DelimForegroundColor$DelimText"
-        fi
-        if ((workingCount != 0)) || $ShowStatusWhenZero; then
-            gitstring+="$WorkingBackgroundColor$WorkingForegroundColor +$filesAdded ~$filesModified -$filesDeleted"
-        fi
-        if ((filesUnmerged != 0)); then
-            gitstring+=" $WorkingBackgroundColor$WorkingForegroundColor!$filesUnmerged"
-        fi
-    fi
     gitstring+="${rebase:+$RebaseForegroundColor$RebaseBackgroundColor$rebase}"
 
-    if $EnableStashStatus && $hasStash; then
-        gitstring+="$DefaultBackgroundColor$DefaultForegroundColor $StashBackgroundColor$StashForegroundColor$BeforeStash$stashCount$AfterStash"
+    # index status
+    if $EnableFileStatus; then
+        local indexCount="$(( $indexAdded + $indexModified + $indexDeleted + $indexUnmerged ))"
+        local workingCount="$(( $filesAdded + $filesModified + $filesDeleted + $filesUnmerged ))"
+
+        if (( $indexCount != 0 )) || $ShowStatusWhenZero; then
+            gitstring+="$IndexBackgroundColor$IndexForegroundColor +$indexAdded ~$indexModified -$indexDeleted"
+        fi
+        if (( $indexUnmerged != 0 )); then
+            gitstring+=" $IndexBackgroundColor$IndexForegroundColor!$indexUnmerged"
+        fi
+        if (( $indexCount != 0 && ($workingCount != 0 || $ShowStatusWhenZero) )); then
+            gitstring+="$DelimBackgroundColor$DelimForegroundColor$DelimText"
+        fi
+        if (( $workingCount != 0 )) || $ShowStatusWhenZero; then
+            gitstring+="$WorkingBackgroundColor$WorkingForegroundColor +$filesAdded ~$filesModified -$filesDeleted"
+        fi
+        if (( $filesUnmerged != 0 )); then
+            gitstring+=" $WorkingBackgroundColor$WorkingForegroundColor!$filesUnmerged"
+        fi
+
+        local localStatusSymbol=$LocalDefaultStatusSymbol
+        local localStatusColor=$DefaultForegroundColor
+       
+        if (( workingCount != 0 )); then
+            localStatusSymbol=$LocalWorkingStatusSymbol
+            localStatusColor=$LocalWorkingStatusColor
+        elif (( indexCount != 0 )); then
+            localStatusSymbol=$LocalStagedStatusSymbol
+            localStatusColor=$LocalStagedStatusColor
+        fi
+
+        gitstring+="$DefaultBackgroundColor$localStatusColor$localStatusSymbol$DefaultForegroundColor"
+
+        if $EnableStashStatus && $hasStash; then
+            gitstring+="$DefaultBackgroundColor$DefaultForegroundColor $StashBackgroundColor$StashForegroundColor$BeforeStash$stashCount$AfterStash"
+        fi
     fi
 
     # after-branch text
     gitstring+="$AfterBackgroundColor$AfterForegroundColor$AfterText$DefaultBackgroundColor$DefaultForegroundColor"
-    echo "$gitstring"
+    echo " $gitstring"
 }
 
 # Returns the location of the .git/ directory.
-__posh_gitdir() {
+__posh_gitdir ()
+{
     # Note: this function is duplicated in git-completion.bash
     # When updating it, make sure you update the other one to match.
     if [ -z "${1-}" ]; then
@@ -446,7 +482,7 @@ __posh_gitdir() {
         elif [ -d .git ]; then
             echo .git
         else
-            git rev-parse --git-dir 2> /dev/null
+            git rev-parse --git-dir 2>/dev/null
         fi
     elif [ -d "$1/.git" ]; then
         echo "$1/.git"
@@ -456,66 +492,67 @@ __posh_gitdir() {
 }
 
 # Updates the global variables `__POSH_BRANCH_AHEAD_BY` and `__POSH_BRANCH_BEHIND_BY`.
-__posh_git_ps1_upstream_divergence() {
+__posh_git_ps1_upstream_divergence ()
+{
     local key value
     local svn_remote svn_url_pattern
-    local upstream=git # default
+    local upstream=git          # default
     local legacy=''
 
     svn_remote=()
     # get some config options from git-config
-    local output="$(git config -z --get-regexp '^(svn-remote\..*\.url|bash\.showUpstream)$' 2> /dev/null | tr '\0\n' '\n ')"
+    local output="$(git config -z --get-regexp '^(svn-remote\..*\.url|bash\.showUpstream)$' 2>/dev/null | tr '\0\n' '\n ')"
     while read -r key value; do
         case "$key" in
-            bash.showUpstream)
-                GIT_PS1_SHOWUPSTREAM="$value"
-                if [ -z "${GIT_PS1_SHOWUPSTREAM}" ]; then
-                    return
-                fi
-                ;;
-            svn-remote.*.url)
-                svn_remote[$((${#svn_remote[@]} + 1))]="$value"
-                svn_url_pattern+="\\|$value"
-                upstream=svn+git # default upstream is SVN if available, else git
-                ;;
+        bash.showUpstream)
+            GIT_PS1_SHOWUPSTREAM="$value"
+            if [ -z "${GIT_PS1_SHOWUPSTREAM}" ]; then
+                return
+            fi
+            ;;
+        svn-remote.*.url)
+            svn_remote[ $((${#svn_remote[@]} + 1)) ]="$value"
+            svn_url_pattern+="\\|$value"
+            upstream=svn+git # default upstream is SVN if available, else git
+            ;;
         esac
     done <<< "$output"
 
     # parse configuration values
     for option in ${GIT_PS1_SHOWUPSTREAM}; do
         case "$option" in
-            git | svn) upstream="$option" ;;
-            legacy) legacy=1 ;;
+        git|svn) upstream="$option" ;;
+        legacy)  legacy=1  ;;
         esac
     done
 
     # Find our upstream
     case "$upstream" in
-        git) upstream='@{upstream}' ;;
-        svn*)
-            # get the upstream from the "git-svn-id: ..." in a commit message
-            # (git-svn uses essentially the same procedure internally)
-            local svn_upstream=($(git log --first-parent -1 \
-                --grep="^git-svn-id: \(${svn_url_pattern#??}\)" 2> /dev/null))
-            if ((0 != ${#svn_upstream[@]})); then
-                svn_upstream=${svn_upstream[${#svn_upstream[@]} - 2]}
-                svn_upstream=${svn_upstream%@*}
-                local n_stop="${#svn_remote[@]}"
-                local n
-                for ((n = 1; n <= n_stop; n++)); do
-                    svn_upstream=${svn_upstream#${svn_remote[$n]}}
-                done
+    git)    upstream='@{upstream}' ;;
+    svn*)
+        # get the upstream from the "git-svn-id: ..." in a commit message
+        # (git-svn uses essentially the same procedure internally)
+        local svn_upstream=($(git log --first-parent -1 \
+                    --grep="^git-svn-id: \(${svn_url_pattern#??}\)" 2>/dev/null))
+        if (( 0 != ${#svn_upstream[@]} )); then
+            svn_upstream=${svn_upstream[ ${#svn_upstream[@]} - 2 ]}
+            svn_upstream=${svn_upstream%@*}
+            local n_stop="${#svn_remote[@]}"
+            local n
+            for ((n=1; n <= n_stop; n++)); do
+                svn_upstream=${svn_upstream#${svn_remote[$n]}}
+            done
 
-                if [ -z "$svn_upstream" ]; then
-                    # default branch name for checkouts with no layout:
-                    upstream=${GIT_SVN_ID:-git-svn}
-                else
-                    upstream=${svn_upstream#/}
-                fi
-            elif [ 'svn+git' = "$upstream" ]; then
-                upstream='@{upstream}'
+            if [ -z "$svn_upstream" ]; then
+                # default branch name for checkouts with no layout:
+                upstream=${GIT_SVN_ID:-git-svn}
+            else
+                upstream=${svn_upstream#/}
             fi
-            ;;
+        elif [ 'svn+git' = "$upstream" ]; then
+            upstream='@{upstream}'
+        fi
+        ;;
     esac
 
     local return_code=
@@ -524,18 +561,18 @@ __posh_git_ps1_upstream_divergence() {
     # Find how many commits we are ahead/behind our upstream
     if [ -z "$legacy" ]; then
         local output=
-        output=$(git rev-list --count --left-right $upstream...HEAD 2> /dev/null)
+        output=$(git rev-list --count --left-right $upstream...HEAD 2>/dev/null)
         return_code=$?
         IFS=$' \t\n' read -r __POSH_BRANCH_BEHIND_BY __POSH_BRANCH_AHEAD_BY <<< $output
     else
         local output
-        output=$(git rev-list --left-right $upstream...HEAD 2> /dev/null)
+        output=$(git rev-list --left-right $upstream...HEAD 2>/dev/null)
         return_code=$?
         # produce equivalent output to --count for older versions of git
         while IFS=$' \t\n' read -r commit; do
             case "$commit" in
-                "<*") ((__POSH_BRANCH_BEHIND_BY++)) ;;
-                ">*") ((__POSH_BRANCH_AHEAD_BY++)) ;;
+            "<*") (( __POSH_BRANCH_BEHIND_BY++ )) ;;
+            ">*") (( __POSH_BRANCH_AHEAD_BY++ ))  ;;
             esac
         done <<< $output
     fi
