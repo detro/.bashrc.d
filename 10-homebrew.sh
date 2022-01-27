@@ -1,7 +1,14 @@
-if [[ "MACOSX" == ${OSNAME} ]] && [[ -x "$(which brew)" ]]; then
-	export PATH="/usr/local/bin:/usr/local/sbin:${PATH}"
+BREW_HOME="/opt/homebrew"
+BREW_BIN="${BREW_HOME}/bin/brew"
 
-	# Including "bash-completion@2" if installed
-	export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
-	[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+# Setup shell for Homebrew
+if [[ -x "${BREW_BIN}" ]]; then
+	eval $(${BREW_BIN} shellenv)
+
+	# Setup "bash-completion@2" if found
+	if [[ -r "$(${BREW_BIN} --prefix)/etc/profile.d/bash_completion.sh" ]]; then
+		source "$(${BREW_BIN} --prefix)/etc/profile.d/bash_completion.sh"
+	fi
 fi
+
+
