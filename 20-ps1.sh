@@ -17,9 +17,9 @@ __exit_code () {
   local previous_exit_code=$?
   
   if [ $previous_exit_code -eq 0 ]; then
-    echo "\[\e[1;32m\][✔ $previous_exit_code]$NOCOL"
+    echo "\[\e[1;32m\]✔$previous_exit_code$NOCOL"
   else
-    echo "\[\e[1;31m\][✘ $previous_exit_code]$NOCOL"
+    echo "\[\e[1;31m\]✘$previous_exit_code$NOCOL"
   fi
 }
 
@@ -38,7 +38,7 @@ __host () {
 }
 
 __path () {
-  echo "\[\e[2;33m\]\w$NOCOL"
+  echo "\[\e[0;33m\]\w$NOCOL"
 }
 
 __prompt () {
@@ -49,8 +49,12 @@ __separator () {
   echo "\[\e[1;30m\]$1$NOCOL"
 }
 
+__utc_timestamp () {
+  echo "\[\e[0;34m\]$(date -u '+%Y%m%d-%H%M%S')$NOCOL"
+}
+
 __set_ps1 () {
-  export PS1="$(__exit_code) $(__username)$(__separator @)$(__host)$(__separator :)$(__path) $(__posh_git_echo)\n$(__prompt)"
+  export PS1="$(__exit_code) $(__utc_timestamp) $(__username)$(__separator @)$(__host) $(__path)$(__posh_git_echo)\n$(__prompt)"
 }
 
 export PROMPT_COMMAND="__set_ps1"
