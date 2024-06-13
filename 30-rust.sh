@@ -1,2 +1,5 @@
 # Rust(up) (see https://rustup.rs/)
-[ -d "$HOME/.cargo/bin" ] && export PATH="$HOME/.cargo/bin:$PATH"
+if [[ -d "$HOME/.cargo" ]]; then
+	source "$HOME/.cargo/env"
+	export PATH="$HOME/.cargo/bin:$PATH"
+fi
