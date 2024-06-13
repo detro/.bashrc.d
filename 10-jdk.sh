@@ -4,6 +4,10 @@ if [[ "MACOSX" == ${OSNAME} ]]; then
 	DEFAULT_JAVA_HOME=$(${MACOS_JAVAHOME_BIN} 2>/dev/null)
 	export JAVA_HOME="${DEFAULT_JAVA_HOME}"
 
+	if [[ -d "$(brew --prefix)/opt/openjdk/bin" ]]; then
+		export PATH="$(brew --prefix)/opt/openjdk/bin:$PATH"
+	fi
+
 	function jdkset() {
 		local ver="${1}"
 
