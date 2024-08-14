@@ -11,8 +11,9 @@ case "${OSTYPE}" in
 esac
 
 # Source all the 'bashrc.d' files
-for BASHRC_D_FILE in `ls ${THIS_DIR}/*.sh`; do
-    source $BASHRC_D_FILE
+# NOTE: Prepending `\` to `ls` to prevent alias expansion and just use plain `ls`
+for BASHRC_D_FILE in $(\ls ${THIS_DIR}/*.sh); do
+  source "${BASHRC_D_FILE}"
 done
 
 # Colorful logging helper: INFO (green) level
