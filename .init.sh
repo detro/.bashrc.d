@@ -35,3 +35,9 @@ function error() {
 function nln() {
 	echo ""
 }
+
+function bashrcd_reload() {
+  info "Reloading '~/.bashrc.d' ..."
+  source ${HOME}/.bashrc.d/.init.sh
+  info "DONE!"
+}
