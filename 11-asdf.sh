@@ -5,8 +5,13 @@ if [[ -e "$HOME/.asdf/asdf.sh" ]]; then
 	. $HOME/.asdf/completions/asdf.bash
 fi
 
-## ASDF installed via Homebrew (0.16 and later)
+# ASDF installed via Homebrew (0.16 and later)
 if [[ -e "$(brew --prefix)/opt/asdf/libexec/asdf.sh" ]]; then
 	. /opt/homebrew/opt/asdf/libexec/asdf.sh
 	. /opt/homebrew/etc/bash_completion.d/asdf
+fi
+
+# Handle Java Plugin
+if [[ -e "~/.asdf/plugins/java/set-java-home.bash" ]]; then
+	. ${HOME}/.asdf/plugins/java/set-java-home.bash
 fi
