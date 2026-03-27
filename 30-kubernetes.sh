@@ -1,5 +1,6 @@
 # Kubectl auto-completion
 if which kubectl &>/dev/null; then
+    info "🏭 Setting up 'kubectl' Bash completion"
     KUBECTL_COMPLETION_TMP=$(mktemp kubectl-completion-XXXXX)
     kubectl completion bash >${KUBECTL_COMPLETION_TMP}
     source ${KUBECTL_COMPLETION_TMP}
@@ -12,10 +13,13 @@ complete -F __start_kubectl k
 
 # Editor for `kubectl edit`
 if which subl &>/dev/null; then
+    info "🏭 Exported KUBE_EDITOR (Sublime Text)"
     export KUBE_EDITOR="subl -w"
 elif which nvim &>/dev/null; then
+    info "🏭 Exported KUBE_EDITOR (Neo Vim)"
     export KUBE_EDITOR="nvim"
 elif which vim &>/dev/null; then
+    info "🏭 Exported KUBE_EDITOR (Vim)"
     export KUBE_EDITOR="vim"
 fi
 

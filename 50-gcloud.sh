@@ -5,10 +5,12 @@ GCLOUD_INSTALL_PATH=${HOME}/bin/google-cloud-sdk
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f "${GCLOUD_INSTALL_PATH}/path.bash.inc" ]; then
+	info "☁️ Updated PATH for Google Cloud SDK"
 	source "${GCLOUD_INSTALL_PATH}/path.bash.inc"
 fi
 
 # The next line enables shell command completion for gcloud.
 if [ -f "${GCLOUD_INSTALL_PATH}/completion.bash.inc" ]; then
+	info "☁️ Setup Bash completion for 'gcloud'"
 	source "${GCLOUD_INSTALL_PATH}/completion.bash.inc"
 fi
