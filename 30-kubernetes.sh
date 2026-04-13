@@ -23,6 +23,16 @@ elif which vim &>/dev/null; then
     export KUBE_EDITOR="vim"
 fi
 
+# Show Secret content with all values Base64 Decoded (JSON)
+k_secret_json() {
+    cat | jq -r '.data | map_values(@base64d)'
+}
+
+# Show Secret content with all values Base64 Decoded (YAML)
+k_secret_yaml() {
+    cat | yq -r '.data | map_values(@base64d)'
+}
+
 # # Setup a bare-minimum, local port forwarding for a service
 # k_portfw() {
 #     if [ $# -ne 3 ]; then
