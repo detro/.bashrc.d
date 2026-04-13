@@ -22,6 +22,18 @@ function nln() {
 }
 
 # ----------------------------------------------- Utilities
+# Set `EDITOR` for every other tool to use
+if which subl &>/dev/null; then
+    info "✒️ Exported EDITOR (Sublime Text)"
+    export EDITOR="subl -w"
+elif which nvim &>/dev/null; then
+    info "✒️ Exported EDITOR (Neo Vim)"
+    export EDITOR="nvim"
+elif which vim &>/dev/null; then
+    info "✒️ Exported EDITOR (Vim)"
+    export EDITOR="vim"
+fi
+
 function bashrcd_reload() {
   info "🔄 Reloading 'github.com/detro/.bashrc.d' (from ${THIS_DIR}) ..."
   source "${THIS_DIR}/.init.sh"
