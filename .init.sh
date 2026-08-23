@@ -1,3 +1,14 @@
+# ----------------------------------------------- Prerequisites Check
+if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
+	error "🛑 Bash version 4.0+ is required (found ${BASH_VERSION})"
+	return 1 2>/dev/null || exit 1
+fi
+
+if ! which jq &>/dev/null; then
+	error "🛑 'jq' is required but not found in PATH"
+	return 1 2>/dev/null || exit 1
+fi
+
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &>/dev/null && pwd )"
 
 # ------------------------- Log a line if shell spawned by an Agent
