@@ -26,6 +26,7 @@ function nln() {
 	[[ -z "$AGENT" ]] && echo "" >&2 || true
 }
 
+# ----------------------------------------------- Global Constants
 # Export OSNAME
 case "${OSTYPE}" in
   solaris*) OSNAME="SOLARIS" ;;
@@ -41,9 +42,9 @@ info "🚀 Exporting OSNAME=$OSNAME for OSTYPE=$OSTYPE"
 info "🚀 Initializing 'github.com/detro/.bashrc.d' (from ${THIS_DIR})"
 
 # NOTE: Prepending `\` to `ls` to prevent alias expansion and just use plain `ls`
-for BASHRC_D_FILE in $(\ls ${THIS_DIR}/*.sh); do
+for BASHRC_D_FILE in "${THIS_DIR}"/*.sh; do
+  # shellcheck source=*.sh
   source "${BASHRC_D_FILE}"
 done
 
-info "🟢 'github.com/detro/.bashrc.d' ready!"
-
+info "🟢 https://github.com/detro/.bashrc.d READY!"
