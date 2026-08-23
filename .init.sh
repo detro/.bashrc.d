@@ -1,26 +1,29 @@
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &>/dev/null && pwd )"
 
+# ------------------------- Log a line if shell spawned by an Agent
+[[ -n "$AGENT" ]] && echo "=== 🤖 Shell spawned by an Agent 🤖 ==="
+
 # ----------------------------------------------- Log Coloring
+# NOTE: Logging is suppressed if shell spawned by an Agent
+
 # Colorful logging helper: INFO (green) level
 function info() {
-	echo -e "\e[32m* ${*}\e[39m"
+	[[ -z "$AGENT" ]] && echo -e "\e[32m* ${*}\e[39m" >&2 || true
 }
 
 # Colorful logging helper: WARN (orange) level
 function warn() {
-	echo -e "\e[33m* ${*}\e[39m"
+	[[ -z "$AGENT" ]] && echo -e "\e[33m* ${*}\e[39m" >&2 || true
 }
 
 # Colorful logging helper: ERROR (red) level
 function error() {
-	echo -e "\e[31m* ${*}\e[39m"
+	[[ -z "$AGENT" ]] && echo -e "\e[31m* ${*}\e[39m" >&2 || true
 }
 
 # Colorful logging helper: just a new line
 function nln() {
-	echo ""
-}
-
+	[[ -z "$AGENT" ]] && echo "" >&2 || true
 }
 
 # Export OSNAME
