@@ -1,10 +1,7 @@
 # Kubectl auto-completion
 if which kubectl &>/dev/null; then
     info "🏭 Setting up 'kubectl' Bash completion"
-    KUBECTL_COMPLETION_TMP=$(mktemp kubectl-completion-XXXXX)
-    kubectl completion bash >${KUBECTL_COMPLETION_TMP}
-    source ${KUBECTL_COMPLETION_TMP}
-    rm ${KUBECTL_COMPLETION_TMP}
+    source <(kubectl completion bash)
 fi
 
 # Alias and ensure completion works for the alias too
@@ -92,5 +89,6 @@ k_secret_yaml() {
 # Kubebuilder
 # Based on: https://book.kubebuilder.io/quick-start.html#installation
 if [[ -d "/usr/local/kubebuilder/bin" ]]; then
+    info "🏭 Setup PATH: Kubebuilder"
     export PATH=${PATH}:/usr/local/kubebuilder/bin
 fi

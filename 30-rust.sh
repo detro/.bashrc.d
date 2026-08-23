@@ -1,5 +1,5 @@
 # Rust(up) (see https://rustup.rs/)
 if [[ -d "$HOME/.cargo" ]]; then
-	info "🦀 Detected Rust 'cargo'"
+	info "🦀 Setup: Rust Cargo"
 	source "$HOME/.cargo/env"
 fi

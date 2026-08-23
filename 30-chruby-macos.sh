@@ -1,6 +1,8 @@
 # Setup chruby (https://github.com/postmodern/chruby) on macOS,
 # based on https://jekyllrb.com/docs/installation/macos/.
 if [[ -x "$(brew --prefix)/opt/chruby/" ]]; then
+  info "💄 Setup chruby"
+
 	# Enables chruby
 	source $(brew --prefix)/opt/chruby/share/chruby/chruby.sh
 
