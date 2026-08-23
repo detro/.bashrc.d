@@ -1,43 +1,75 @@
 # My personal `~/.bashrc.d`
 
-If you are here, you use Bash and you like to have the same bash setup across all your machines/accounts.
+Modular Bash configuration based on the Unix `.d` directory pattern (similar to `/etc/profile.d/` or `conf.d/`). Scripts are sourced dynamically in lexicographical order at shell startup.
 
-So, in line with the Unix principle organising _additional_ configuration files in a directory like `/path/to/normal/config/file.d/`,
-I started to do the same for my bash. Create a collection of additional scripts/files/snippets to execute at the launch of my bash session.
-This allows to personalize, tweak, colorize and what not.
+## Prerequisites
 
-When I created this repo on GitHub, I also discovered that many others have done similar things. This is in no way special, just my take on it.
+- **Bash 4.0+**
+- **jq** (required by `.init.sh`)
 
-## Install
+## Installation
 
-**1.** Add the following to your `~/.bashrc` file
-```bash
-# Initialize `~/.bashrc.d`
-[[ -s "${HOME}/.bashrc.d/.init.sh" ]] && source ${HOME}/.bashrc.d/.init.sh
+1. Add initialization snippet to `~/.bashrc` (or `~/.bash_profile` for macOS login shells):
+   ```bash
+   # Initialize ~/.bashrc.d
+   [[ -s "${HOME}/.bashrc.d/.init.sh" ]] && source "${HOME}/.bashrc.d/.init.sh"
+   ```
+
+2. Clone repository:
+   ```bash
+   git clone https://github.com/detro/.bashrc.d.git ~/.bashrc.d
+   ```
+
+3. Launch a new shell session.
+
+## Personalization & Non-Git Configuration (`*.private.*`)
+
+To maintain machine-specific configurations, sensitive tokens, or personal preferences without committing them to version control, use the `*.private.*` pattern ignored by `.gitignore`:
+
+- **Private scripts (`*.private.sh`)**: Drop any script ending in `.private.sh` into `~/.bashrc.d/` (e.g., `10-work-paths.private.sh`). `.init.sh` automatically discovers and sources it in alphabetical order alongside public scripts.
+- **Private data/config (`*.private.json`)**: Store secrets, structured configs, or metadata consumed by companion scripts without exposure.
+
+## Startup Logging & Agent Awareness
+
+- **Interactive shells**: Each script emits informative, colored log lines (`info`, `warn`, `error`) reporting which tools, paths, completions, and aliases are loaded.
+- **Coding agent shells**: When `$AGENT` is set, `.init.sh` detects that the shell was spawned by an AI coding agent, logs a single header line, and silences all startup log messages to keep command output clean and prevent LLM context window pollution.
+
+## Feature Spotlight: OPMC (1Password macOS Cache)
+
+Located in `26-1password_macos_cache.sh`.
+
+### Problem
+Exporting environment variables from 1Password via CLI (`export TOKEN=$(op read ...)`) triggers Touch ID or master password prompts on every single new terminal tab or shell instance.
+
+### Solution
+OPMC uses the macOS Keychain (via the native `security` CLI) as a secure local cache. The Keychain unlocks automatically on login.
+
+- First run: Retrieves secret from 1Password (`op read`), caches it into macOS Keychain, then exports it.
+- Subsequent shells: Reads directly from macOS Keychain instantly, bypassing 1Password prompts.
+
+### Configuration
+
+Create `26-1password_macos_cache.private.json` in the root directory:
+
+```json
+{
+  "secrets": [
+    {
+      "envVar": "NPM_TOKEN",
+      "opSecRef": "op://Private/npm/credential",
+      "opVault": "Private",
+      "opAccURL": "my-account.1password.com"
+    }
+  ]
+}
 ```
-**2.** Git clone this project as follows:
-```bash
-git clone https://github.com/detro/.bashrc.d.git ~/.bashrc.d
-```
-**3.** Start a new shell (i.e. bash session)
 
-### Using _Terminal_ on macOS
+### Management Commands
 
-By default, _Terminal_ starts the shell via `/usr/bin/login`, which makes the shell a login shell.
-On every platform (not just Mac OS X) bash does not use `.bashrc` for login shells (only `/etc/profile` and
-the first of `~/.bash_profile`, `~/.bash_login`, `~/.profile` that exists and is readable).
-So, make sure to alter **step 1.** based on your needs. Personally? I like `~/.bash_profile`. 
-
-## Personalization?
-
-As much as one would love to write a set of Bash tweaks and functionalities, and have them work everywhere they work, there are still situations where you really need very specific things, in very circonscript contexts.
-
-In other words, if there is a specific configuration that you want to keep local to a machine, just add the file to your local copy of `.bashrc.d` with the extension `.private.sh`. Git will ignore it but it will get loaded.
-
-## Special mention
-
-One of the scripts I use for my prompt is [posh-git-sh](https://github.com/lyze/posh-git-sh): thanks to [David Xu](https://github.com/lyze) for creating it.
+- `opmc_export_all`: Refresh environment variables from cache (runs on startup).
+- `opmc_clear <ENV_VAR>`: Invalidate a specific cached secret.
+- `opmc_clear_all`: Wipe all configured secrets from Keychain cache to force 1Password reload.
 
 ## License
 
-None. Do with this as you see fit: [unlicense](http://unlicense.org/).
+[The Unlicense](http://unlicense.org/) (Public Domain).
