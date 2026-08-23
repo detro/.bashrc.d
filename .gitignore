@@ -1,2 +1,3 @@
-*.private.sh
+# Any file containing the string `.private.` will be Git-ignored
+*.private.*
 .DS_Store
